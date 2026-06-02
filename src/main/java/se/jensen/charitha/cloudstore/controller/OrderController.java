@@ -22,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody OrderRequestDto request) {
+    public Order createOrder(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody OrderRequestDto request) {
         return service.createOrder(request);
     }
 
