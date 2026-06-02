@@ -1,8 +1,14 @@
 package se.jensen.charitha.cloudstore.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class OrderItemRequestDto {
 
+    @NotNull(message = "productId is required")
     private Long productId;
+
+    @Min(value = 1, message = "quantity must be at least 1")
     private int quantity;
 
     public OrderItemRequestDto() {
