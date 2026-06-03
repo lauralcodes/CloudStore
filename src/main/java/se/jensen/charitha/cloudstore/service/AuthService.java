@@ -5,10 +5,6 @@ import se.jensen.charitha.cloudstore.dto.LoginRequestDto;
 import se.jensen.charitha.cloudstore.dto.RegisterRequestDto;
 import se.jensen.charitha.cloudstore.model.User;
 import se.jensen.charitha.cloudstore.repository.UserRepository;
-import se.jensen.charitha.cloudstore.security.JwtTokenUtil;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +13,11 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager,
-                       JwtTokenUtil jwtTokenUtil) {
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     public AuthResponseDto register(RegisterRequestDto request) {
@@ -53,17 +43,10 @@ public class AuthService {
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             return new AuthResponseDto(false, "Password is required.");
         }
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
-            String token = jwtTokenUtil.generateToken(
-                    new org.springframework.security.core.userdetails.User(
-                            request.getUsername(), request.getPassword(), java.util.Collections.emptyList())
-            );
-            return new AuthResponseDto(true, "Login successful.", token);
-        } catch (AuthenticationException e) {
+        User user = userRepository.findByUsername(request.getUsername()).orElse(null);
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return new AuthResponseDto(false, "Invalid username or password.");
         }
+        return new AuthResponseDto(true, "Login successful.");
     }
 }
