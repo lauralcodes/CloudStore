@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import se.jensen.charitha.cloudstore.dto.OrderItemRequestDto;
 import se.jensen.charitha.cloudstore.dto.OrderRequestDto;
 import se.jensen.charitha.cloudstore.model.Order;
@@ -33,7 +33,7 @@ class OrderServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @MockBean
+    @MockitoBean
     private ProductService productService;
 
     @BeforeEach

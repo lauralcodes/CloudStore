@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import se.jensen.charitha.cloudstore.client.ProductClient;
 import se.jensen.charitha.cloudstore.model.Product;
 import se.jensen.charitha.cloudstore.model.Rating;
@@ -27,7 +27,7 @@ class ProductServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @MockBean
+    @MockitoBean
     private ProductClient productClient;
 
     @BeforeEach
