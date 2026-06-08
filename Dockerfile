@@ -4,12 +4,11 @@ WORKDIR /app
 
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
-
 RUN chmod +x mvnw
-RUN ./mvnw -q -DskipTests dependency:go-offline
 
-COPY src src
-RUN ./mvnw -q -DskipTests package
+COPY src ./src
+
+RUN ./mvnw clean package -DskipTests
 
 
 FROM eclipse-temurin:17-jre
@@ -20,4 +19,4 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
