@@ -1,0 +1,33 @@
+version: 0.2
+
+# Main build — runs on push to main via CodePipeline.
+# Unit tests + packaging. E2E runs in a separate pipeline stage.
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+  pre_build:
+    commands:
+      - echo "=== Main build for $CODEBUILD_RESOLVED_SOURCE_VERSION ==="
+  build:
+    commands:
+      - echo "=== Unit tests ==="
+      - mvn -B test
+  post_build:
+    commands:
+      - echo "=== Build complete ==="
+
+artifacts:
+  files:
+    - Dockerfile
+    - .dockerignore
+    - pom.xml
+    - src/**/*
+  discard-paths: no
+
+reports:
+  unit-test-reports:
+    files:
+      - 'target/surefire-reports/*.xml'
+    file-format: JUNITXML
