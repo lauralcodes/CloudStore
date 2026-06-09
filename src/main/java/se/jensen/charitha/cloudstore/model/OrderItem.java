@@ -22,10 +22,6 @@ public class OrderItem {
     private int quantity;
     private float totalPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
     public OrderItem() {
     }
 
@@ -85,11 +81,4 @@ public class OrderItem {
         this.totalPrice = totalPrice;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
 }
