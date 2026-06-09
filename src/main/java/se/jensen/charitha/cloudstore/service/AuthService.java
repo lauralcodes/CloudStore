@@ -5,6 +5,11 @@ import se.jensen.charitha.cloudstore.dto.LoginRequestDto;
 import se.jensen.charitha.cloudstore.dto.RegisterRequestDto;
 import se.jensen.charitha.cloudstore.model.User;
 import se.jensen.charitha.cloudstore.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +18,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     public AuthResponseDto register(RegisterRequestDto request) {
@@ -43,10 +51,14 @@ public class AuthService {
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             return new AuthResponseDto(false, "Password is required.");
         }
-        User user = userRepository.findByUsername(request.getUsername()).orElse(null);
-        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return new AuthResponseDto(true, "Login successful.");
+        } catch (AuthenticationException ex) {
             return new AuthResponseDto(false, "Invalid username or password.");
         }
-        return new AuthResponseDto(true, "Login successful.");
     }
 }

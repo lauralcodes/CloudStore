@@ -1,7 +1,6 @@
 package se.jensen.charitha.cloudstore.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -19,30 +18,25 @@ public class Product {
     private String category;
     private String image;
 
-    @Embedded
-    private Rating rating;
-
     public Product() {
     }
 
-    public Product(int id, String title, float price, String description, String category, String image, Rating rating) {
+    public Product(int id, String title, float price, String description, String category, String image) {
         this.id = (long) id;
         this.title = title;
         this.price = price;
         this.description = description;
         this.category = category;
         this.image = image;
-        this.rating = rating;
     }
 
-    public Product(long id, String title, float price, String description, String category, String image, Rating rating) {
+    public Product(long id, String title, float price, String description, String category, String image) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.description = description;
         this.category = category;
         this.image = image;
-        this.rating = rating;
     }
 
     public long getId() {
@@ -91,13 +85,5 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Rating getRating() {
-        return rating;
-    }
-
-    public void setRating(Rating rating) {
-        this.rating = rating;
     }
 }

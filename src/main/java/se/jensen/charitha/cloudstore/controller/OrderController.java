@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody OrderRequestDto request) {
-        return service.createOrder(request);
+    public Order createOrder(@Valid @RequestBody OrderRequestDto request, Principal principal) {
+        return service.createOrder(request, principal.getName());
     }
 
     @GetMapping
