@@ -24,9 +24,12 @@ public class OrderService {
         this.productService = productService;
     }
 
-    public Order createOrder(OrderRequestDto request) {
+    public Order createOrder(OrderRequestDto request, String authenticatedUsername) {
         if (request.getUsername() == null || request.getUsername().isBlank()) {
             throw new IllegalArgumentException("Username is required to place an order.");
+        }
+        if (!request.getUsername().equals(authenticatedUsername)) {
+            throw new IllegalArgumentException("Authenticated user does not match order username.");
         }
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new IllegalArgumentException("At least one order item is required.");

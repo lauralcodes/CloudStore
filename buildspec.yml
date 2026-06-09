@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17   # or corretto11 depending on your project
+    commands:
+      - echo Installing dependencies...
+      - mvn -version
+
+  pre_build:
+    commands:
+      - echo Pre-build phase started
+      - mvn clean
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn package -DskipTests
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - target/*.jar
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.m2/**/*'
