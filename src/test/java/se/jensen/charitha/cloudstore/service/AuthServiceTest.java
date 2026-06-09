@@ -2,10 +2,15 @@ package se.jensen.charitha.cloudstore.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import se.jensen.charitha.cloudstore.dto.AuthResponseDto;
 import se.jensen.charitha.cloudstore.dto.LoginRequestDto;
 import se.jensen.charitha.cloudstore.dto.RegisterRequestDto;
@@ -13,23 +18,31 @@ import se.jensen.charitha.cloudstore.model.User;
 import se.jensen.charitha.cloudstore.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @Autowired
+    @Mock
     private UserRepository userRepository;
 
-    @Autowired
+    @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private Authentication authentication;
 
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(userRepository, passwordEncoder);
-        userRepository.deleteAll();
+        authService = new AuthService(userRepository, passwordEncoder, authenticationManager);
     }
 
     @Test
@@ -39,26 +52,33 @@ class AuthServiceTest {
         request.setEmail("test@example.com");
         request.setPassword("secret");
 
+        when(userRepository.existsByUsername("testuser")).thenReturn(false);
+        when(passwordEncoder.encode("secret")).thenReturn("encoded-secret");
+
         AuthResponseDto response = authService.register(request);
 
         assertThat(response).isNotNull();
         assertThat(response.isSuccess()).isTrue();
         assertThat(response.getMessage()).isEqualTo("Registration successful.");
 
-        User savedUser = userRepository.findByUsername("testuser").orElseThrow();
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+        assertThat(savedUser.getUsername()).isEqualTo("testuser");
         assertThat(savedUser.getEmail()).isEqualTo("test@example.com");
-        assertThat(passwordEncoder.matches("secret", savedUser.getPassword())).isTrue();
+        assertThat(savedUser.getPassword()).isEqualTo("encoded-secret");
+        assertThat(savedUser.getRole()).isEqualTo("ROLE_USER");
     }
 
     @Test
     void shouldReturnErrorWhenLoginCredentialsAreInvalid() {
-        String rawPassword = "secret";
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-        userRepository.save(new User("testuser", "test@example.com", encodedPassword, "ROLE_USER"));
-
         LoginRequestDto request = new LoginRequestDto();
         request.setUsername("testuser");
         request.setPassword("wrongpass");
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("invalid credentials"));
 
         AuthResponseDto response = authService.login(request);
 

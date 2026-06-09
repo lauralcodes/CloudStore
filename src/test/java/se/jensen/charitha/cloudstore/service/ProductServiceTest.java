@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import se.jensen.charitha.cloudstore.client.ProductClient;
 import se.jensen.charitha.cloudstore.model.Product;
-import se.jensen.charitha.cloudstore.model.Rating;
 import se.jensen.charitha.cloudstore.repository.ProductRepository;
 
 import java.util.List;
@@ -37,8 +36,8 @@ class ProductServiceTest {
 
     @Test
     void shouldFetchAndSaveProductsFromClient() {
-        Product productOne = new Product(1L, "First Product", 10.0f, "Description 1", "Category", "image1.png", new Rating(4.2, 5));
-        Product productTwo = new Product(2L, "Second Product", 20.0f, "Description 2", "Category", "image2.png", new Rating(3.8, 2));
+        Product productOne = new Product(1L, "First Product", 10.0f, "Description 1", "Category", "image1.png");
+        Product productTwo = new Product(2L, "Second Product", 20.0f, "Description 2", "Category", "image2.png");
         when(productClient.fetchProducts()).thenReturn(new Product[]{productOne, productTwo});
 
         List<Product> savedProducts = productService.fetchAndSaveProducts();
@@ -52,7 +51,7 @@ class ProductServiceTest {
 
     @Test
     void shouldReturnAllProductsFromRepository() {
-        Product product = new Product(100L, "Stored Product", 5.0f, "Stored description", "Category", "image.png", new Rating(4.0, 1));
+        Product product = new Product(100L, "Stored Product", 5.0f, "Stored description", "Category", "image.png");
         productRepository.save(product);
 
         List<Product> products = productService.getAllProducts();

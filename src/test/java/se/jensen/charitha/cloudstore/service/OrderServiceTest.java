@@ -10,7 +10,6 @@ import se.jensen.charitha.cloudstore.dto.OrderItemRequestDto;
 import se.jensen.charitha.cloudstore.dto.OrderRequestDto;
 import se.jensen.charitha.cloudstore.model.Order;
 import se.jensen.charitha.cloudstore.model.Product;
-import se.jensen.charitha.cloudstore.model.Rating;
 import se.jensen.charitha.cloudstore.repository.OrderRepository;
 import se.jensen.charitha.cloudstore.repository.ProductRepository;
 
@@ -44,7 +43,7 @@ class OrderServiceTest {
 
     @Test
     void shouldCreateOrderWhenProductExists() {
-        Product product = new Product(1L, "Test Product", 12.5f, "Test description", "Category", "image.png", new Rating(4.5, 10));
+        Product product = new Product(1L, "Test Product", 12.5f, "Test description", "Category", "image.png");
         productRepository.save(product);
 
         OrderItemRequestDto itemRequest = new OrderItemRequestDto();
@@ -55,7 +54,7 @@ class OrderServiceTest {
         request.setUsername("johndoe");
         request.setItems(List.of(itemRequest));
 
-        Order createdOrder = orderService.createOrder(request);
+        Order createdOrder = orderService.createOrder(request, "johndoe");
 
         assertThat(createdOrder).isNotNull();
         assertThat(createdOrder.getId()).isNotNull();
@@ -70,7 +69,7 @@ class OrderServiceTest {
 
     @Test
     void shouldFetchProductsWhenRepositoryIsEmpty() {
-        Product fetchedProduct = new Product(1L, "Fetched Product", 15f, "Fetched description", "Category", "image.png", new Rating(4.0, 5));
+        Product fetchedProduct = new Product(1L, "Fetched Product", 15f, "Fetched description", "Category", "image.png");
         when(productService.fetchAndSaveProducts()).thenAnswer(invocation -> productRepository.saveAll(List.of(fetchedProduct)));
 
         OrderItemRequestDto itemRequest = new OrderItemRequestDto();
@@ -81,7 +80,7 @@ class OrderServiceTest {
         request.setUsername("janedoe");
         request.setItems(List.of(itemRequest));
 
-        Order createdOrder = orderService.createOrder(request);
+        Order createdOrder = orderService.createOrder(request, "janedoe");
 
         assertThat(createdOrder).isNotNull();
         assertThat(createdOrder.getUsername()).isEqualTo("janedoe");
