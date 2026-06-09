@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudStore</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<header class="hero">
+    <div class="hero__content">
+        <p class="eyebrow">CloudStore</p>
+        <h1>Welcome to Cloud Store</h1>
+        <p class="hero__text">Style, Tech & More—Delivered to Your Doorp>
+        <p id="authStatus" class="auth-status">Not signed in</p>
+    </div>
+</header>
+
+<main class="layout">
+    <section class="card">
+        <h2>Register account</h2>
+        <div class="field-grid">
+            <input id="registerUsername" placeholder="Username">
+            <input id="registerEmail" placeholder="Email">
+            <input id="registerPassword" type="password" placeholder="Password">
+        </div>
+        <button onclick="registerUser()">Register</button>
+    </section>
+
+    <section class="card">
+        <h2>Log in</h2>
+        <div class="field-grid">
+            <input id="loginUsername" placeholder="Username">
+            <input id="loginPassword" type="password" placeholder="Password">
+        </div>
+        <button onclick="loginUser()">Log in</button>
+    </section>
+
+    <section class="card card--wide">
+        <div class="section-head">
+            <h2>Products</h2>
+            <button onclick="loadProducts()">Refresh products</button>
+        </div>
+        <div id="products" class="product-grid"></div>
+    </section>
+
+    <section class="card card--wide">
+        <div class="section-head">
+            <h2>My orders</h2>
+            <button onclick="loadOrders()">Refresh orders</button>
+        </div>
+        <div id="orders" class="order-list"></div>
+    </section>
+</main>
+
+<script th:src="@{/app.js}"></script>
+</body>
+</html>

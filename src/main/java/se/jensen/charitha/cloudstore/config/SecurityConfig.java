@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/index", "/app.js", "/styles.css", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**", "/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/orders/**").authenticated()

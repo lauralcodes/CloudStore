@@ -1,12 +1,6 @@
 package se.jensen.charitha.cloudstore.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +17,8 @@ public class Order {
     private float total;
     private String status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items = new ArrayList<>();
 
     public Order() {
@@ -76,7 +71,6 @@ public class Order {
     }
 
     public void addItem(OrderItem item) {
-        item.setOrder(this);
         this.items.add(item);
     }
 }

@@ -1,5 +1,6 @@
 package se.jensen.charitha.cloudstore.controller;
 
+import org.springframework.security.core.Authentication;
 import se.jensen.charitha.cloudstore.dto.OrderRequestDto;
 import se.jensen.charitha.cloudstore.model.Order;
 import se.jensen.charitha.cloudstore.service.OrderService;
@@ -29,7 +30,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
-        return service.getAllOrders();
+    public List<Order> getOrders(Authentication authentication) {
+        String username = authentication.getName();
+        return service.getOrderForUser(username);
     }
 }

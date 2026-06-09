@@ -64,7 +64,7 @@ class OrderServiceTest {
         assertThat(createdOrder.getItems()).hasSize(1);
         assertThat(createdOrder.getItems().get(0).getProductId()).isEqualTo(1L);
 
-        assertThat(orderService.getAllOrders()).hasSize(1);
+        assertThat(orderService.getOrderForUser("johndoe")).hasSize(1);
     }
 
     @Test
