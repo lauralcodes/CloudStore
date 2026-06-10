@@ -29,7 +29,7 @@ public class OrderService {
             throw new IllegalArgumentException("Username is required to place an order.");
         }
         if (!request.getUsername().equals(authenticatedUsername)) {
-            throw new IllegalArgumentException("Authenticated user does not match order username.");
+            throw new IllegalArgumentException("Authenticated user does not match order username. Add the correct user name");
         }
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new IllegalArgumentException("At least one order item is required.");
